@@ -4,6 +4,7 @@ import Mooc.Todo
 
 -- Some imports you'll need. Don't add other imports :)
 import Data.List
+import Test.QuickCheck.Text (Str)
 
 ------------------------------------------------------------------------------
 -- Ex 1: compute binomial coefficients using recursion. Binomial
@@ -16,8 +17,10 @@ import Data.List
 -- Hint! pattern matching is your friend.
 
 binomial :: Integer -> Integer -> Integer
-binomial = todo
-
+binomial n 0 = 1
+binomial 0 k | k > 0 = 0
+             | otherwise = k 
+binomial n k = binomial (n-1) (k-1) + binomial (n-1) k
 ------------------------------------------------------------------------------
 -- Ex 2: implement the odd factorial function. Odd factorial is like
 -- factorial, but it only multiplies odd numbers.
@@ -27,7 +30,13 @@ binomial = todo
 --   oddFactorial 6 ==> 5*3*1 ==> 15
 
 oddFactorial :: Integer -> Integer
-oddFactorial = todo
+oddFactorial n = oddFactorial' 1 n
+oddFactorial' :: Integer -> Integer -> Integer
+oddFactorial' a 1 = a
+oddFactorial' a n | n `mod` 2 == 0 = oddFactorial' a (n-1)
+                  | otherwise = oddFactorial' (a * n) (n-1)
+
+
 
 ------------------------------------------------------------------------------
 -- Ex 3: implement the Euclidean Algorithm for finding the greatest
@@ -59,7 +68,12 @@ oddFactorial = todo
 -- * https://en.wikipedia.org/wiki/Euclidean_algorithm
 
 myGcd :: Integer -> Integer -> Integer
-myGcd = todo
+myGcd a b = myGcd' a b 
+myGcd' :: Integer -> Integer -> Integer
+myGcd' a 0 = a
+myGcd' 0 b = b
+myGcd' a b | a > b = myGcd' (a-b) b
+           |otherwise = myGcd' a (b-a)
 
 ------------------------------------------------------------------------------
 -- Ex 4: Implement the function leftpad which adds space characters
@@ -75,7 +89,10 @@ myGcd = todo
 -- * you can compute the length of a string with the length function
 
 leftpad :: String -> Int -> String
-leftpad = todo
+leftpad str n = leftpad' str (n - length str)
+leftpad' :: String -> Int -> String
+leftpad' str 0 = str
+leftpad' str n = leftpad' (" " ++ str) (n-1)
 
 ------------------------------------------------------------------------------
 -- Ex 5: let's make a countdown for a rocket! Given a number, you
@@ -91,7 +108,10 @@ leftpad = todo
 -- * you'll probably need a recursive helper function
 
 countdown :: Integer -> String
-countdown = todo
+countdown n = countdown' "Ready! " n
+countdown' :: String -> Integer -> String
+countdown' str 0 = str ++ "Liftoff!"
+countdown' str n = countdown'(str ++ show n ++ "... ") (n-1)
 
 ------------------------------------------------------------------------------
 -- Ex 6: implement the function smallestDivisor that returns the
@@ -109,7 +129,12 @@ countdown = todo
 -- Hint: remember the mod function!
 
 smallestDivisor :: Integer -> Integer
-smallestDivisor = todo
+smallestDivisor n = smallestDivisor' n n n
+smallestDivisor' :: Integer -> Integer -> Integer -> Integer
+smallestDivisor' c d 1 = d
+smallestDivisor' c d p | (c `mod` p == 0) = smallestDivisor' c p (p-1)
+                       | otherwise = smallestDivisor' c d (p-1)
+                                
 
 ------------------------------------------------------------------------------
 -- Ex 7: implement a function isPrime that checks if the given number
@@ -118,7 +143,13 @@ smallestDivisor = todo
 -- Ps. 0 and 1 are not prime numbers
 
 isPrime :: Integer -> Bool
-isPrime = todo
+isPrime 1 = False
+isPrime n = isPrime' n 9
+isPrime' :: Integer -> Integer -> Bool
+isPrime' c 1 = True
+isPrime' c n | (c `mod` n == 0) = if c == n then isPrime' c (n-1) else False
+             | otherwise = isPrime' c (n-1)
+
 
 ------------------------------------------------------------------------------
 -- Ex 8: implement a function biggestPrimeAtMost that returns the
@@ -133,4 +164,7 @@ isPrime = todo
 --   biggestPrimeAtMost 10 ==> 7
 
 biggestPrimeAtMost :: Integer -> Integer
-biggestPrimeAtMost = todo
+biggestPrimeAtMost n = biggestPrime' n
+biggestPrime' :: Integer -> Integer
+biggestPrime' c | isPrime' c 9 == True = c
+                | otherwise = biggestPrime' (c-1)
